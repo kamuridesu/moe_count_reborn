@@ -1,0 +1,58 @@
+version: '3'
+services:
+  nginx:
+    container_name: docker-nginx
+    image: nginx:latest
+    networks:
+      - django_network
+    ports:
+      - 8088:80
+    restart: on-failure
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+
+  redis:
+    container_name: redis-stack-server
+    image: redis/redis-stack-server:latest
+    networks:
+      - django_network
+    ports:
+      - 6379:6379
+    restart: on-failure
+
+  web:
+    build: .
+    command: sh -c "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn -c config/gunicorn/prod.py"
+    container_name: web
+    environment:
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DEPLOY_PROD=True
+    depends_on:
+      - redis
+    ports:
+      - 8080:8080
+    hostname: web
+    networks:
+      - django_network
+    restart: on-failure
+    volumes:
+      - ./db:/app/db
+
+  celery_worker:
+    build: .
+    command: sh -c "python manage.py collectstatic --no-input && celery -A moe_count worker -l warning"
+    container_name: celery_worker
+    environment:
+      # This environment variable must be set to allow celery with pickle serializer to run with root access
+      - C_FORCE_ROOT=True
+      - REDIS_URL=redis
+    depends_on:
+      - web
+      - redis
+    restart: on-failure
+    hostname: celery_worker
+    networks:
+      - django_network
+
+networks:
+  django_network:
