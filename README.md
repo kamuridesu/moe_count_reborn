@@ -1,5 +1,7 @@
 # moe_count_django
 
+![counter](https://count.kamuridesu.com/?username=moe_count_reborn)
+
 Reborn Moe Count, now written in Django with Celery and deployed with Gunicorn and Nginx!
 
 This is a Django version of my Flask project, [Moe Count](https://github.com/kamuridesu/moe_count).
