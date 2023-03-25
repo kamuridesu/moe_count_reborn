@@ -1,0 +1,33 @@
+name: CD
+on: 
+  push:
+    branches:
+      - "main"
+jobs:
+  deploy:
+    name: Deploy to aws
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && 'refs/head/main'
+    steps:
+      - name: Configure SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/aws
+          chmod 600 ~/.ssh/aws
+          cat >>~/.ssh/config <<END
+          Host $IP_ADDR
+            HostName $IP_ADDR
+            User $USERNAME
+            IdentityFile ~/.ssh/aws
+            StrictHostKeyChecking no
+          END
+        env:
+            SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+            IP_ADDR: ${{ secrets.IP_ADDR }}
+            USERNAME: ${{ secrets.SERVER_USER }}
+        
+      - name: Clone or update repository
+        run: ssh ${{ secrets.SERVER_USER }}@${{ secrets.IP_ADDR }} "cd ${{ github.event.repository.name }} && git pull || git clone https://github.com/${{ github.repository }}.git"
+      - name: Build and run with Composer
+        run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.IP_ADDR }} "cd ${{ github.event.repository.name }} && export DJANGO_SECRET_KEY=\"${{ secrets.DJANGO_SECRET_KEY }}\"; docker-compose up --build -d"
