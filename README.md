@@ -2,6 +2,8 @@
 
 Reborn Moe Count, now written in Django with Celery and deployed with Gunicorn and Nginx!
 
+This is a Django version of my Flask project, [Moe Count](https://github.com/kamuridesu/moe_count).
+
 # Project Structure
 
 <img src="diagrams/diagram.svg"/>
@@ -42,3 +44,10 @@ docker-compose up -d --build
 
 - `/`:
   - Parameters: `username`. If `username` is empty, it'll raise a 404 page.
+
+## Advantages
+- More fine grained control over every step, from the web server to the functions.
+- Structure more organized.
+## Disaventages
+- Bloat. The project has a lot of files.
+- Memory hungry: Celery uses about 300M, Django uses about 100M. In total, this project uses almost 500M of RAM, while the Flask one is using something like 50M.
