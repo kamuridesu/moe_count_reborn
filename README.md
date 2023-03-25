@@ -38,3 +38,7 @@ Just run the following command:
 docker-compose up -d --build
 ```
 
+# Endpoints
+
+- `/`:
+  - Parameters: `username`. If `username` is empty, it'll raise a 404 page.
