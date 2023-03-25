@@ -50,6 +50,6 @@ docker-compose up -d --build
 ## Advantages
 - More fine grained control over every step, from the web server to the functions.
 - Structure more organized.
-## Disaventages
+## Disadvantages
 - Bloat. The project has a lot of files.
 - Memory hungry: Celery uses about 300M, Django uses about 100M. In total, this project uses almost 500M of RAM, while the Flask one is using something like 50M.
