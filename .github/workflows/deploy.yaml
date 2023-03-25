@@ -30,4 +30,4 @@ jobs:
         run: ssh ${{ secrets.SERVER_USER }}@${{ secrets.IP_ADDR }} "cd ${{ github.event.repository.name }} && git pull || git clone https://github.com/${{ github.repository }}.git"
       - name: Build and run with Composer
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.IP_ADDR }} "cd ${{ github.event.repository.name }}/project && export DJANGO_SECRET_KEY=\"${{ secrets.DJANGO_SECRET_KEY }}\"; docker-compose up --build -d"
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.IP_ADDR }} "cd ${{ github.event.repository.name }}/project && export DJANGO_SECRET_KEY=\"${{ secrets.DJANGO_SECRET_KEY }}\"; sudo docker-compose up --build -d"
